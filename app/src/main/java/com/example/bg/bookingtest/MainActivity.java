@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String BUTTON_TEXT = "Call Google Calendar API";
     private static final String PREF_ACCOUNT_NAME = "accountName";
-    private static final String[] READONLY_SCOPES = { CalendarScopes.CALENDAR_READONLY };
+    //private static final String[] READONLY_SCOPES = { CalendarScopes.CALENDAR_READONLY };
     private static final String[] SCOPES = { CalendarScopes.CALENDAR};
 
 
