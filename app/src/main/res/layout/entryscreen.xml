@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/entryScreen"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.bg.bookingtest.MainActivity"
+    >
+
+    <Button
+        android:id="@+id/closeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="X"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+    <EditText
+        android:id="@+id/titleText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/closeButton"
+        android:layout_marginStart="49dp"
+        android:ems="10"
+        android:hint="Title"
+        android:inputType="text" />
+
+    <EditText
+        android:id="@+id/time1Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="time"
+        android:layout_below="@+id/titleText"
+        android:layout_toEndOf="@+id/titleText" />
+
+    <EditText
+        android:id="@+id/time2Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="time"
+        android:layout_marginStart="41dp"
+        android:layout_alignBaseline="@+id/toText"
+        android:layout_alignBottom="@+id/toText"
+        android:layout_toEndOf="@+id/toText" />
+
+    <TextView
+        android:id="@+id/toText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/time1Text"
+        android:layout_alignBottom="@+id/time1Text"
+        android:layout_marginStart="42dp"
+        android:layout_toEndOf="@+id/time1Text"
+        android:text="To" />
+
+    <EditText
+        android:id="@+id/date1Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/titleText"
+        android:layout_below="@+id/titleText"
+        android:ems="10"
+        android:inputType="date" />
+
+    <EditText
+        android:id="@+id/date2Text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/time2Text"
+        android:layout_toEndOf="@+id/time2Text"
+        android:ems="10"
+        android:inputType="date" />
+
+    <EditText
+        android:id="@+id/nameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date1Text"
+        android:layout_toStartOf="@+id/time1Text"
+        android:ems="10"
+        android:hint="Name"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/phoneText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/nameText"
+        android:layout_below="@+id/nameText"
+        android:ems="10"
+        android:hint="Phone"
+        android:inputType="phone" />
+
+    <EditText
+        android:id="@+id/descText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/phoneText"
+        android:layout_below="@+id/phoneText"
+        android:layout_marginTop="29dp"
+        android:layout_toStartOf="@+id/date2Text"
+        android:ems="10"
+        android:hint="Description"
+        android:inputType="textMultiLine" />
+</RelativeLayout>
