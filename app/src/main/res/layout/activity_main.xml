@@ -118,4 +118,9 @@
         android:layout_weight="0.23"
         android:text="View Entries" />
 
+    <Spinner
+        android:id="@+id/EmployeeSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+    
 </LinearLayout>
