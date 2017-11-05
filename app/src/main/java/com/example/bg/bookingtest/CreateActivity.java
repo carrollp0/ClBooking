@@ -1,5 +1,28 @@
 package com.example.bg.bookingtest;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
+import com.google.api.client.extensions.android.http.AndroidHttp;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GoogleAccountCredential;
+import com.google.api.client.googleapis.extensions.android.gms.auth.GooglePlayServicesAvailabilityIOException;
+import com.google.api.client.googleapis.extensions.android.gms.auth.UserRecoverableAuthIOException;
+
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.ExponentialBackOff;
+
+import com.google.api.services.calendar.CalendarScopes;
+import com.google.api.client.util.DateTime;
+
+import com.google.api.services.calendar.model.*;
+
+import android.Manifest;
+import android.accounts.AccountManager;
+import android.app.Activity;
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
@@ -9,11 +32,10 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.Spinner;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -26,21 +48,8 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import android.accounts.Account;
-import android.app.Activity;
-import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.RemoteException;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.PopupWindow;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
-import android.view.ViewGroup.LayoutParams;
-import android.widget.ViewFlipper;
 
 import com.clover.sdk.util.CloverAccount;
 import com.clover.sdk.v1.BindingException;
@@ -50,21 +59,17 @@ import com.clover.sdk.v1.merchant.MerchantConnector;
 import com.clover.sdk.v3.inventory.InventoryConnector;
 import com.clover.sdk.v3.inventory.Item;
 import com.clover.sdk.v1.merchant.Merchant;
-import com.clover.sdk.v3.employees.Employee;
-import com.clover.sdk.v3.employees.EmployeeConnector;
 
-public class MainActivity extends AppCompatActivity {
+public class CreateActivity extends AppCompatActivity {
 
     private Context mContext;
     private Activity mActivity;
 
     LinearLayout activityLayout;
 
-    private Spinner empSpinner;
     private Account mAccount;
     private InventoryConnector mInventoryConnector;
     private MerchantConnector mMerchantConnector;
-    private EmployeeConnector mEmployeeConnector
     private TextView mMerchantTextView;
     private TextView mInventoryTextView;
 
@@ -91,19 +96,20 @@ public class MainActivity extends AppCompatActivity {
         System.loadLibrary("native-lib");
     }
 
-
-public class MainActivity extends AppCompatActivity {
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_create);
+
+        //For the Back Arrow
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Get the application context
         mContext = getApplicationContext();
 
         // Get the activity
-        mActivity = MainActivity.this;
+        mActivity = CreateActivity.this;
 
         // Get the widgets reference from XML layout
         //initialLayout = (LinearLayout) findViewById(R.id.initialScreen);
@@ -127,6 +133,16 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        if (id == android.R.id.home) {
+            this.finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     //testing adding entries to a google calendar
@@ -208,7 +224,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 mBackButton.setEnabled(false);
-                setContentView(R.layout.activity_main);
+                setContentView(R.layout.activity_create);
                 mBackButton.setEnabled(true);
             }
         });
@@ -249,8 +265,6 @@ public class MainActivity extends AppCompatActivity {
         }
         connectInventory();
         connectMerchant();
-        connectEmployees();
-        
         //mMerchantTextView = (TextView) findViewById(R.id.merchantName);
         //mInventoryTextView = (TextView) findViewById(R.id.inventoryItem);
         //new MerchantAsyncTask().execute();
@@ -262,7 +276,6 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         disconnectInventory();
         disconnectMerchant();
-        disconnectEmployees();
     }
 
 
@@ -299,20 +312,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void connectEmployees() {
-        disconnectEmployees();
-
-        if (mAccount != null ) {
-            mEmployeeConnector = new EmployeeConnector(this, mAccount, null);
-            mEmployeeConnector.connect();
-        }
-    }
-    private void disconnectEmployees() {
-        if (mEmployeeConnector != null) {
-            mEmployeeConnector.disconnect();
-            mEmployeeConnector = null;
-        }
-    }
     private class InventoryAsyncTask extends AsyncTask<Void, Void, Item> {
 
         @Override
@@ -553,7 +552,7 @@ public class MainActivity extends AppCompatActivity {
             final int connectionStatusCode) {
         GoogleApiAvailability apiAvailability = GoogleApiAvailability.getInstance();
         Dialog dialog = apiAvailability.getErrorDialog(
-                MainActivity.this,
+                CreateActivity.this,
                 connectionStatusCode,
                 REQUEST_GOOGLE_PLAY_SERVICES);
         dialog.show();
@@ -621,7 +620,7 @@ public class MainActivity extends AppCompatActivity {
             return eventStrings;
         }
 
-        
+
         @Override
         protected void onPreExecute() {
             mOutputText.setText("");
@@ -650,7 +649,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (mLastError instanceof UserRecoverableAuthIOException) {
                     startActivityForResult(
                             ((UserRecoverableAuthIOException) mLastError).getIntent(),
-                            MainActivity.REQUEST_AUTHORIZATION);
+                            CreateActivity.REQUEST_AUTHORIZATION);
                 } else {
                     mOutputText.setText("The following error occurred:\n"
                             + mLastError.getMessage());
@@ -660,29 +659,4 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-        defineButtons();
-    }
-
-    public void defineButtons() {
-        //findViewById(R.id.viewEntriesButton).setOnClickListener(buttonClickListener);
-        //findViewById(R.id.createEntryButton).setOnClickListener(buttonClickListener);
-        //findViewById(R.id.editEntriesButton).setOnClickListener(buttonClickListener);
-    }
-
-    //private View.OnClickListener buttonClickListener = new View.OnClickListener() {
-    //    @Override
-    //    public void onClick(View view) {
-    //        switch (view.getId()) {
-    //            case R.id.viewEntriesButton:
-    //                startActivity(new Intent(getApplicationContext(), ViewActivity.class));
-    //                break;
-    //            case R.id.createEntryButton:
-    //                startActivity(new Intent(getApplicationContext(), CreateActivity.class));
-    //                break;
-    //            case R.id.editEntriesButton:
-    //                startActivity(new Intent(getApplicationContext(), EditActivity.class));
-    //                break;
-    //        }
-    //    }
-    //};
 }
