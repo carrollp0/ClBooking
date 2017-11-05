@@ -36,7 +36,9 @@ import android.text.TextUtils;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -76,6 +78,8 @@ import com.clover.sdk.v1.merchant.MerchantConnector;
 import com.clover.sdk.v3.inventory.InventoryConnector;
 import com.clover.sdk.v3.inventory.Item;
 import com.clover.sdk.v1.merchant.Merchant;
+import com.clover.sdk.v3.employees.Employee;
+import com.clover.sdk.v3.employees.EmployeeConnector;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -84,9 +88,11 @@ public class MainActivity extends AppCompatActivity {
 
     LinearLayout activityLayout;
 
+    private Spinner empSpinner;
     private Account mAccount;
     private InventoryConnector mInventoryConnector;
     private MerchantConnector mMerchantConnector;
+    private EmployeeConnector mEmployeeConnector
     private TextView mMerchantTextView;
     private TextView mInventoryTextView;
 
@@ -268,6 +274,8 @@ public class MainActivity extends AppCompatActivity {
         }
         connectInventory();
         connectMerchant();
+        connectEmployees();
+        
         //mMerchantTextView = (TextView) findViewById(R.id.merchantName);
         //mInventoryTextView = (TextView) findViewById(R.id.inventoryItem);
         //new MerchantAsyncTask().execute();
@@ -279,6 +287,7 @@ public class MainActivity extends AppCompatActivity {
         super.onDestroy();
         disconnectInventory();
         disconnectMerchant();
+        disconnectEmployees();
     }
 
 
@@ -315,6 +324,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    private void connectEmployees() {
+        disconnectEmployees();
+
+        if (mAccount != null ) {
+            mEmployeeConnector = new EmployeeConnector(this, mAccount, null);
+            mEmployeeConnector.connect();
+        }
+    }
+    private void disconnectEmployees() {
+        if (mEmployeeConnector != null) {
+            mEmployeeConnector.disconnect();
+            mEmployeeConnector = null;
+        }
+    }
     private class InventoryAsyncTask extends AsyncTask<Void, Void, Item> {
 
         @Override
@@ -623,7 +646,7 @@ public class MainActivity extends AppCompatActivity {
             return eventStrings;
         }
 
-
+        
         @Override
         protected void onPreExecute() {
             mOutputText.setText("");
